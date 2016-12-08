@@ -1,0 +1,33 @@
+#!/bin/bash
+
+case "$1" in
+01)
+  CID=01
+  IP=172.18.27.11
+  ;;
+02)
+  CID=02
+  IP=172.18.27.12
+  ;;
+03)
+  CID=03
+  IP=172.18.27.13
+  ;;
+*)
+  exit -1
+esac
+
+exec docker run \
+  --name cassie${CID} \
+  --ip ${IP} \
+  --net cassie \
+  -e CASSANDRA_SEEDS="172.18.27.11,172.18.27.12,172.18.27.13" \
+  -e MAX_HEAP_SIZE=2048M \
+  -e HEAP_NEWSIZE=200M \
+  -v /home/cassie${CID}/commitlog:/var/lib/cassandra/commitlog \
+  -v /home/cassie${CID}/data:/var/lib/cassandra/data \
+  -v /home/cassie${CID}/hints:/var/lib/cassandra/hints \
+  -v /home/cassie${CID}/saved_caches:/var/lib/cassandra/saved_caches \
+  -v /home/cassie${CID}/log:/var/log/cassandra \
+  -v /home/common:/common \
+  -d cassandra:3.7

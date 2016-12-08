@@ -1,0 +1,3 @@
+#!/bin/bash
+
+exec docker run --net=cassie -it --rm -v /home/common:/common cassandra:3.7 /bin/bash

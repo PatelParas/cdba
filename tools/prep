@@ -1,0 +1,10 @@
+#!/bin/bash
+
+sudo mkdir /home/common
+sudo chmod 01777 /home/common
+cp `dirname $0`/../stress.yaml /home/common
+sudo mkdir /home/cassie01
+sudo mkdir /home/cassie02
+sudo mkdir /home/cassie03
+docker network create --subnet 172.18.27.0/24 cassie
+docker pull cassandra:3.7

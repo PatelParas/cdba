@@ -1,0 +1,49 @@
+#
+# Keyspace info
+#
+keyspace: stress
+
+keyspace_definition: |
+  CREATE KEYSPACE stress WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 3};
+
+table: stress
+
+table_definition: |
+  CREATE TABLE stress (
+        name text,
+        date timestamp,
+        value bigint,
+        PRIMARY KEY((name), date)
+  ) 
+    WITH compaction = { 'class':'LeveledCompactionStrategy' }
+
+columnspec:
+  - name: name
+    size: uniform(1..100)
+    population: uniform(1..10M)
+  - name: date
+    cluster: uniform(20..40)
+  - name: value
+    population: gaussian(1..1000)
+    cluster: uniform(1..4)
+
+insert:
+  partitions: uniform(1..50)
+  batchtype: LOGGED
+  select: uniform(1..10)/10
+
+queries:
+   simple1:
+      cql: select * from typestest where name = ? LIMIT 100
+      fields: samerow
+   range1:
+      cql: select * from typestest where name = ? and date >= ? LIMIT 100
+      fields: multirow
+
+token_range_queries:
+  all_columns_tr_query:
+    columns: '*'
+    page_size: 5000
+
+  value_tr_query:
+    columns: value
